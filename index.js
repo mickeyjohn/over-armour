@@ -22,7 +22,8 @@ export default class OverArmour {
 
   /** Make any function failsafe */
   ironclad (func, fail) {
-    let ironcladFun
+    let ironcladFun;
+    
     if (this.isAsync(func)) {
       ironcladFun = async function () {
         try {
@@ -45,25 +46,18 @@ export default class OverArmour {
       }
     }
 
-    return ironcladFun
-  }
-
-  getAllMethodNames (obj) {
-    let methods = []
-    while (obj = Reflect.getPrototypeOf(obj)) {
-      let keys = Reflect.ownKeys(obj)
-      keys.forEach((k) => methods.push(k))
-    }
-    return methods
+    return ironcladFun;
   }
 
   /** Make all methods on any Object fortified */
   fortify (bareObj) {
-    const methods = this.getAllMethodNames(bareObj)
-    methods.forEach((functionName) => {
-      const unsafeFunction = bareObj[functionName]
-      bareObj[functionName] = this.ironclad(unsafeFunction, this.fail)
-    })
+    var name, method;
+    for (name in bareObj) {
+      method = bareObj[name];
+      if (typeof method == "function") {        
+        bareObj[name] = this.ironclad(method, this.fail);
+      }
+    }
   }
 
 }
